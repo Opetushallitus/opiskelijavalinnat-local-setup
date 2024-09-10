@@ -1,0 +1,11 @@
+version: '3.2'
+services:
+  nginx:
+    build:
+      context: "nginx"
+    network_mode: "host"
+  dns:
+    build:
+      context: "./dns"
+    ports:
+      - "5443:5443"
