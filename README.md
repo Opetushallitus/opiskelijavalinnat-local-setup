@@ -53,6 +53,8 @@ Features in Development -> "Host Networking". Tämä toimenpidettä ei tarvita j
 Linuxilla. Host networking -toimintoa tarvitaan jotta nginx voi ohjata liikennettä takaisin host-ympäristössä oleville
 lokaaleille palveluille.
 
+![host-networking](./images/host-networking.png)
+
 
 3. Konfiguroi nginx ohjaamaan lokaalisti ajettavat palvelut lokaaleihin portteihin. Tämä tehdään muuttamalla tiedostoa
 docker/nginx/localhost.conf. Tiedosto sisältää muutaman esimerkin. Portti on luonnollisesti palvelukohtainen ja riippuu
@@ -82,6 +84,8 @@ selaile Internettiä! MacOs:ssä Chromium-polun voi selvittää komennolla "wher
 enabloimalla "Use Secure DNS" ja laittamalla kohtaan "Select DNS Provider" choose "Add custom DNS service provider" arvo
 https://localhost:5443. Näin opintopolkuliikenne ohjautuu lokaaliin nginxiin.
 
+![dns-over-https](./images/dns-over-https.png)
+
 
 7. Lisää seuraavat JVM-parametrit lokaalisti ajettaviin palveluihin:
 
@@ -93,6 +97,8 @@ Javaagent-parametri käynnistää agentin joka yliajaa dns-konfiguraatiot, trust
 truststorea joka sisältää nginxin käyttämän self-signed sertifikaatin, ja --add-opens tarvitaan dns-agentin ajamiseksi
 kun jvm versio on 9+. IDEA:ssa jvm-parametrit saadaan esiin Run tai Debug -konfiguraatioon kohdasta Modify Options ->
 VM Options.
+
+![vm-options](./images/vm-options.png)
 
 
 8. Käynnistä lokaalit palvelut. Palveluiden välisten kutsujen pitäisi nyt näkyä docker compose -ikkunassa nginx-lokilla.
