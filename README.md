@@ -1,0 +1,1 @@
+# opiskelijavalinnat-local-setup
