@@ -4,6 +4,8 @@ services:
     build:
       context: "nginx"
     network_mode: "host"
+    volumes:
+      - ../logs:/var/log/nginx
   dns:
     build:
       context: "./dns"
