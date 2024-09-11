@@ -30,7 +30,7 @@ hyväksyy lokaalin nginx:in self-signed sertifikaatin
 
 
 4. Konfiguroidaan jokin lokaali selain niin että kehitysympäristön urleihin tehdyt kutsut ohjataan lokaaliin nginxiin, ja
-sertifikaattiongelmista ei valiteta.
+nginxin ja dns-palvelimen sertifikaattiongelmista ei valiteta.
 
 Tämän lähestymistavan avulla:
 
@@ -72,12 +72,13 @@ docker compose up --build
 turvaton ja testikäytössä) komennolla:
 
 ``` shell
-<polku chromiumiin> --ignore-certificate-errors --user-data-dir=<esim. ~/test_user>
+<polku chromiumiin> --ignore-certificate-errors-spki-list=03dAvyIQd5sFgZCQeVflkFZ128s053+MzPMZxnoSIro= --user-data-dir=<esim. ~/test_user>
 ```
 
-Näin käynnistettynä Chromium ei valita sertifikaattiongelmista, ja tallentaa asetukset ja datan erilliseen hakemistoon
-niin ettei se vaikuta varsinaiseen Chrome-instanssiin. HUOM! Älä hoida tällä selaimella pankkiasioita tai muutenkaan
-selaile Internettiä! MacOs:ssä Chromium-polun voi selvittää komennolla "whereis chromium".
+Näin käynnistettynä Chromium ei valita dns-palvelimen tai nginxin self-signed sertifikaatista, ja tallentaa asetukset sekä
+datan erilliseen hakemistoon niin ettei se vaikuta varsinaiseen Chrome-instanssiin. HUOM! Vaikka muita sertifikaatteja
+käsitellään normaalisti, on silti suositeltavaa ettei tällä selaimella hoideta pankkiasioita tai selailla muutenkaan internettiä!
+MacOs:ssä Chromium-polun voi selvittää komennolla "whereis chromium".
 
 
 6. Configuroi käynnistetty Chromium käyttämään custom DNS over HTTPS -palvelinta kohdasta Settings -> Privacy and Security
