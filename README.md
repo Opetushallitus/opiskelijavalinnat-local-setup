@@ -30,7 +30,7 @@ hyväksyy lokaalin nginx:in self-signed sertifikaatin
 
 
 4. Konfiguroidaan jokin lokaali selain niin että kehitysympäristön urleihin tehdyt kutsut ohjataan lokaaliin nginxiin, ja
-nginxin ja dns-palvelimen sertifikaattiongelmista ei valiteta.
+nginxin sertifikaattiongelmista ei valiteta.
 
 Tämän lähestymistavan avulla:
 
@@ -46,10 +46,11 @@ testauksen vaatimia toimenpiteitä suoraan kehitysympäristön palveluihin
 
 ### Konfiguraatio
 
-1. Aja ./fetch-jar.sh joka downloadaa dns-manipulaatiokirjaston
+1. Aja ./setup.sh joka a) downloadaa dns-manipulaatiokirjaston, b) luo self-signed sertificaatin, ja c) importtaa luodun certin
+JVM:n käyttämään cacerts-tiedostoon.
 
-2. Enabloi Docker Desktopin host-networking -feature (tähän tarvitaan vähintään version 4.29.0) kohdasta Settings ->
-Features in Development -> "Host Networking". Tämä toimenpidettä ei tarvita jos käytät Dockeria (ei Docker Desktopia)
+2. Enabloi Docker Desktopin host-networking -feature (tähän tarvitaan vähintään versio 4.29.0) kohdasta Settings ->
+Resources -> Network -> "Host Networking". Tämä toimenpidettä ei tarvita jos käytät Dockeria (ei Docker Desktopia)
 Linuxilla. Host networking -toimintoa tarvitaan jotta nginx voi ohjata liikennettä takaisin host-ympäristössä oleville
 lokaaleille palveluille.
 
@@ -61,7 +62,7 @@ docker/nginx/localhost.conf. Tiedosto sisältää muutaman esimerkin. Portti on 
 siitä miten tämän palvelun lokaali kehitys on järjestetty.
 
 
-4. Käynnistä lokaali dns ja nginx ajamalla docker-hakemistossa:
+4. Käynnistä lokaali nginx ajamalla docker-hakemistossa:
 
 ``` shell
 docker compose up --build
@@ -72,20 +73,20 @@ docker compose up --build
 turvaton ja testikäytössä) komennolla:
 
 ``` shell
-<polku chromiumiin> --ignore-certificate-errors-spki-list=03dAvyIQd5sFgZCQeVflkFZ128s053+MzPMZxnoSIro= --user-data-dir=<esim. ~/test_user>
+<polku chromiumiin> --host-resolver-rules='MAP *.testiopintopolku.fi 127.0.0.1, MAP *.untuvaopintopolku.fi 127.0.0.1, MAP *.hahtuvaopintopolku.fi 127.0.0.1' --user-data-dir=<esim. ~/test_user>
 ```
 
-Näin käynnistettynä Chromium ei valita dns-palvelimen tai nginxin self-signed sertifikaatista, ja tallentaa asetukset sekä
-datan erilliseen hakemistoon niin ettei se vaikuta varsinaiseen Chrome-instanssiin. HUOM! Vaikka muita sertifikaatteja
-käsitellään normaalisti, on silti suositeltavaa ettei tällä selaimella hoideta pankkiasioita tai selailla muutenkaan internettiä!
-MacOs:ssä Chromium-polun voi selvittää komennolla "whereis chromium".
+Näin käynnistettynä Chromium ohjaa opintopolkuliikenteen lokaaliin nginxiin, ja tallentaa asetukset sekä datan erilliseen
+hakemistoon niin ettei se vaikuta varsinaiseen Chrome-instanssiin. MacOs:ssä Chromium-polun voi selvittää komennolla
+"whereis chromium".
 
 
-6. Configuroi käynnistetty Chromium käyttämään custom DNS over HTTPS -palvelinta kohdasta Settings -> Privacy and Security
-enabloimalla "Use Secure DNS" ja laittamalla kohtaan "Select DNS Provider" choose "Add custom DNS service provider" arvo
-https://localhost:5443. Näin opintopolkuliikenne ohjautuu lokaaliin nginxiin.
+6. Importtaa hakemistossa docker/nginx oleva selfsigned-cert.pem Chromiumiin kohdasta Settings -> Privacy and Security ->
+Security -> Manage Certificates -> Customized -> Trusted Certificates, näin selain ei valita self signed certistä.
+HUOM! Vaikka muita sertifikaatteja käsitellään normaalisti, on silti suositeltavaa ettei tällä selaimella hoideta
+pankkiasioita tai selailla muutenkaan internettiä!
 
-![dns-over-https](./images/dns-over-https.png)
+![import certificate](./images/import-certificate.png)
 
 
 7. Lisää seuraavat JVM-parametrit lokaalisti ajettaviin palveluihin:
@@ -108,4 +109,4 @@ VM Options.
 9. Avaa testiselaimella virkailijan käyttöliittymä (esim. virkailija.hahtuvaopintopolku.fi) ja kirjaudu sisään. Nginx-
 konfiguraatiosta riippuen osa käyttöliittymästä (esim. /valintalaskenta-ui) ajetaan lokaalisti ja loput tulevat
 varsinaisesta testiympäristöstä. Myös selaimesta lähtevät kutsut eri palveluihin menevät joko testiympäristöön tai
-lokaaliin konfiguraatiosta riippuen.
+lokaaliin nginx-konfiguraatiosta riippuen.

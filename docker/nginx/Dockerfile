@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt-get update; \
-    apt-get install -y curl nginx nano dnsmasq dnsdist
+    apt-get install -y curl nginx ca-certificates nano
 
 RUN mkdir -p /etc/nginx/ssl
 COPY selfsigned-cert.pem selfsigned-key.pem /etc/nginx/ssl/

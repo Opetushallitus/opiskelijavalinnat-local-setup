@@ -6,8 +6,3 @@ services:
     network_mode: "host"
     volumes:
       - ../logs:/var/log/nginx
-  dns:
-    build:
-      context: "./dns"
-    ports:
-      - "5443:5443"

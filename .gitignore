@@ -3,3 +3,6 @@
 download
 dns.jar
 logs
+
+docker/nginx/*.pem
+cacerts
